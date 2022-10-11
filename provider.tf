@@ -6,10 +6,7 @@ terraform {
       version = "~> 3.0.2"
     }
   }
-  azapi = {
-      source  = "Azure/azapi"
-      version = "0.4.0"
-    }
+
 }
 
 provider "azurerm" {
