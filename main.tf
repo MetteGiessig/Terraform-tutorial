@@ -11,6 +11,6 @@ locals {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${local.resource_group_name[terraform.workspace]}-datalake-rg"
+  name     = "${local.environment_name[terraform.workspace]}-datalake-rg"
   location = "North Europe"
 }
