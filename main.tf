@@ -1,9 +1,5 @@
 # Configure the Azure provider
 provider "azurerm" {
-  region = var.region
-}
-
-provider "azurerm" {
   features {}
 }
 
