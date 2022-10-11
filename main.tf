@@ -3,12 +3,14 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = "North Europe"
-
-tags = {
-    Environment = "Dev"
-    Team = "Terraform"
+locals {
+  resource_group_name = {
+    flu-dev   = "flu-dev-datalake-rg"
+    flu-stage = "flu-stage-datalake-rg"
   }
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = local.instance_types[terraform.workspace]
+  location = "North Europe"
 }
