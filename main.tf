@@ -1,8 +1,3 @@
-# Configure the Azure provider
-provider "azurerm" {
-  features {}
-}
-
 locals {
   environment_name = {
     flu-dev   = "flu-dev"
