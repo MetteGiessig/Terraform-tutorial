@@ -1,4 +1,4 @@
 variable "region" {
   description = "region"
-  default     = "North-Europe"
+  default     = "northeurope"
 }
