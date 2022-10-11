@@ -11,6 +11,6 @@ locals {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = local.instance_types[terraform.workspace]
+  name     = local.resource_group_name[terraform.workspace]
   location = "North Europe"
 }
