@@ -87,7 +87,7 @@ resource "azapi_resource" "cr" {
 }
 
 resource "azapi_resource" "aca" {
-  type = "Microsoft.App/containerApps@2022-06-01-preview"
+  type = "Microsoft.App/containerApps@2022-01-01-preview"
   name = "flu-${local.environment_name[terraform.workspace]}-datalake-aca"
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
@@ -97,7 +97,6 @@ resource "azapi_resource" "aca" {
       managedEnvironmentId = azapi_resource.aca_env.id
       configuration = {
         activeRevisionsMode = "Single"
-        maxInactiveRevisions = 10
         ingress = {
           external = true
           targetPort = 8080
