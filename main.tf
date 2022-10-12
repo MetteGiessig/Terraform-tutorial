@@ -1,7 +1,7 @@
 locals {
   environment_name = {
-    flu-dev   = "stage"
-    flu-stage = "dev"
+    flu-dev   = "dev"
+    flu-stage = "stage"
   }
 }
 
