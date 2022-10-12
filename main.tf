@@ -60,7 +60,6 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "fs" {
 # For the dev environment we create a service bus with a topic queue
 
 resource "azurerm_servicebus_namespace" "sb" {
-  count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
   name                = "flu-${local.environment_name[terraform.workspace]}-datalake-sbn"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
