@@ -73,7 +73,7 @@ resource "azurerm_servicebus_namespace" "sb" {
 resource "azurerm_servicebus_topic" "sbt" {
   count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
   name         = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt"
-  namespace_id = azurerm_servicebus_namespace.sb[0].id
+  namespace_id = azurerm_servicebus_namespace.sb.id
 
   enable_partitioning = true
 }
@@ -118,7 +118,7 @@ resource "azapi_resource" "aca" {
         secrets = [
           {
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
-            value = local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_namespace.sb[0].default_primary_connection_string : var.Topic_connection_string
+            value = local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_namespace.sb.default_primary_connection_string : var.Topic_connection_string
           }
         ]
       }
