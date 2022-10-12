@@ -66,3 +66,4 @@ resource "azapi_resource" "cr" {
       dataEndpointEnabled = true
     }
   })
+}
