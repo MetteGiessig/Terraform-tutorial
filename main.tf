@@ -56,11 +56,6 @@ resource "azurerm_storage_account" "st" {
   ]
 }
 
-resource "azurerm_storage_container" "dls" {
-  name                 = "flu${local.environment_name[terraform.workspace]}datalakedls"
-  storage_account_name = azurerm_storage_account.st.name
-}
-
 resource "azurerm_storage_data_lake_gen2_filesystem" "fs" {
   name               = "flu-${local.environment_name[terraform.workspace]}-datalake-fs"
   storage_account_id = azurerm_storage_account.st.id
@@ -69,6 +64,7 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "fs" {
 # For the dev environment we create a service bus with a topic queue
 
 resource "azurerm_servicebus_namespace" "sb" {
+  count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
   name                = "flu-${local.environment_name[terraform.workspace]}-datalake-sbn"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -82,7 +78,7 @@ resource "azurerm_servicebus_namespace" "sb" {
 resource "azurerm_servicebus_topic" "sbt" {
   count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
   name         = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt"
-  namespace_id = azurerm_servicebus_namespace.sb.id
+  namespace_id = azurerm_servicebus_namespace.sb[0].id
 
   enable_partitioning = true
 }
@@ -92,9 +88,9 @@ resource "azurerm_servicebus_topic" "sbt" {
 
 resource "azapi_resource" "aca_env" {
   type      = "Microsoft.App/managedEnvironments@2022-01-01-preview"
+  name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
-  name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
   
   body   = jsonencode({
     properties = {
