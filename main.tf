@@ -137,7 +137,7 @@ resource "azapi_resource" "aca" {
                   }
                 ]
                 metadata = {
-                  messageCount = 10
+                  messageCount = "10"
                   queueName = azurerm_storage_queue.sbq.name
                 }
                 type = "string"
