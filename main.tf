@@ -52,7 +52,7 @@ resource "azurerm_storage_container" "dls" {
 
 resource "azapi_resource" "cr" {
   type      = "Microsoft.ContainerRegistry/registries@2020-11-01-preview"
-  name      = "flu-${local.environment_name[terraform.workspace]}-datalake-cr"
+  name      = "flu${local.environment_name[terraform.workspace]}DatalakeCr"
   parent_id = azurerm_resource_group.rg.id
 
   location = azurerm_resource_group.rg.location
