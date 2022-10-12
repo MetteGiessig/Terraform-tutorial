@@ -55,7 +55,7 @@ resource "azurerm_storage_container" "dls" {
 }
 
 resource "azurerm_storage_queue" "sbq" {
-  count = ${local.create_queue[terraform.workspace]} ? 1 : 0
+  count = local.environment_name[terraform.workspace] ? 1 : 0
   name                 = "flu${local.environment_name[terraform.workspace]}datalakesbq"
   storage_account_name = azurerm_storage_account.st.name
 }
