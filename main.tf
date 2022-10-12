@@ -51,7 +51,7 @@ resource "azurerm_storage_container" "dls" {
 }
 
 resource "azapi_resource" "aca_env" {
-  type      = "Microsoft.App/managedEnvironments@2022-06-01-preview"
+  type      = "Microsoft.App/managedEnvironments@2022-01-01-preview"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
   name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
@@ -70,7 +70,7 @@ resource "azapi_resource" "aca_env" {
 }
 
 resource "azapi_resource" "cr" {
-  type      = "Microsoft.ContainerRegistry/registries@2022-02-01-preview"
+  type      = "Microsoft.ContainerRegistry/registries@2021-12-01-preview"
   name      = "flu${local.environment_name[terraform.workspace]}DatalakeCr"
   parent_id = azurerm_resource_group.rg.id
 
