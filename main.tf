@@ -83,7 +83,7 @@ resource "azurerm_servicebus_topic" "sbt" {
 # Create a managed Environment with a container appi
 
 resource "azapi_resource" "aca_env" {
-  type      = "Microsoft.App/managedEnvironments@2022-01-01-preview"
+  type      = "Microsoft.App/managedEnvironments@2022-06-01-preview"
   name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
