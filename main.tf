@@ -63,7 +63,6 @@ resource "azapi_resource" "cr" {
     }
     properties = {
       adminUserEnabled = true
-      dataEndpointEnabled = true
     }
   })
 }
