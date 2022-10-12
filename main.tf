@@ -156,7 +156,7 @@ resource "azapi_resource" "aca" {
                 ]
                 metadata = {
                   messageCount = "10"
-                  queueName =  local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_topic.sbt.name : var.Topic_name
+                  queueName =  local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
                 }
                 type = "string"
               }
