@@ -1,18 +1,7 @@
-locals {
-  environment_name = {
-    flu-dev   = "dev"
-    flu-stage = "stage"
-  }
-  create_queue = {
-    flu-dev   = true
-    flu-stage = false
-  }
-}
-
 # Creating the Resource Group for all the resources
 
 resource "azurerm_resource_group" "rg" {
-  name     = "flu-${local.environment_name[terraform.workspace]}-datalake-rg"
+  name     = "flu-${var.environment_name}-datalake-rg"
   location = var.region
 }
 
@@ -20,7 +9,7 @@ resource "azurerm_resource_group" "rg" {
 
 resource "azurerm_log_analytics_workspace" "log" {
   location            = var.region
-  name                = "flu-${local.environment_name[terraform.workspace]}-datalaker-log"
+  name                = "flu-${var.environment_name}-datalaker-log"
   resource_group_name = azurerm_resource_group.rg.name
   retention_in_days   = 90
   depends_on = [
@@ -31,7 +20,7 @@ resource "azurerm_log_analytics_workspace" "log" {
 resource "azurerm_application_insights" "appi" {
   application_type    = "web"
   location            = var.region
-  name                = "flu${local.environment_name[terraform.workspace]}-datalake-appi"
+  name                = "flu-${var.environment_name}-datalake-appi"
   resource_group_name = azurerm_resource_group.rg.name
   workspace_id        = azurerm_log_analytics_workspace.log.id
   sampling_percentage = 0
@@ -44,7 +33,7 @@ resource "azurerm_application_insights" "appi" {
 # Create the storage account with the Azure Data Lake Storage Gen2
 
 resource "azurerm_storage_account" "st" {
-  name                             = "flu${local.environment_name[terraform.workspace]}datalakest"
+  name                             = "flu${var.environment_name}datalakest"
   account_replication_type         = "LRS"
   account_tier                     = "Standard"
   access_tier                      = "Cool"
@@ -57,15 +46,15 @@ resource "azurerm_storage_account" "st" {
 }
 
 resource "azurerm_storage_data_lake_gen2_filesystem" "fs" {
-  name               = "flu-${local.environment_name[terraform.workspace]}-datalake-fs"
+  name               = "flu-${var.environment_name}-datalake-fs"
   storage_account_id = azurerm_storage_account.st.id
 }
 
 # For the dev environment we create a service bus with a topic queue
 
 resource "azurerm_servicebus_namespace" "sb" {
-  count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
-  name                = "flu-${local.environment_name[terraform.workspace]}-datalake-sbn"
+  count = var.environment_name == "flu-dev" ? 1 : 0
+  name                = "flu-${var.environment_name}-datalake-sbn"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
@@ -76,8 +65,8 @@ resource "azurerm_servicebus_namespace" "sb" {
 }
 
 resource "azurerm_servicebus_topic" "sbt" {
-  count = local.environment_name[terraform.workspace] == "flu-dev" ? 1 : 0
-  name         = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt"
+  count = var.environment_name == "flu-dev" ? 1 : 0
+  name         = "flu-${var.environment_name}-datalake-sbt"
   namespace_id = azurerm_servicebus_namespace.sb[0].id
 
   enable_partitioning = true
@@ -88,7 +77,7 @@ resource "azurerm_servicebus_topic" "sbt" {
 
 resource "azapi_resource" "aca_env" {
   type      = "Microsoft.App/managedEnvironments@2022-01-01-preview"
-  name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
+  name      = "flu-${var.environment_name}-datalake-env"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
   
@@ -107,7 +96,7 @@ resource "azapi_resource" "aca_env" {
 
 resource "azapi_resource" "aca" {
   type = "Microsoft.App/containerApps@2022-01-01-preview"
-  name = "flu-${local.environment_name[terraform.workspace]}-datalake-aca"
+  name = "flu-${var.environment_name}-datalake-aca"
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
 
@@ -122,8 +111,8 @@ resource "azapi_resource" "aca" {
         }
         secrets = [
           {
-            name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
-            value = local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_namespace.sb[0].default_primary_connection_string : var.Topic_connection_string
+            name = "flu-${var.environment_name}-datalake-sbt-connection-string"
+            value = var.environment_name == "flu-dev" ? azurerm_servicebus_namespace.sb[0].default_primary_connection_string : var.Topic_connection_string
           }
         ]
       }
@@ -131,7 +120,7 @@ resource "azapi_resource" "aca" {
         containers = [
           {
             image = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
-            name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
+            name = "flu-${var.environment_name}-datalake-ci"
             resources = {
               cpu = 0.25
               memory = "0.5Gi"
@@ -146,13 +135,13 @@ resource "azapi_resource" "aca" {
               custom = {
                 auth = [
                   {
-                    secretRef = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
+                    secretRef = "flu-${var.environment_name}-datalake-sbt-connection-string"
                     triggerParameter = "connection"
                   }
                 ]
                 metadata = {
                   messageCount = "10"
-                  queueName =  local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
+                  queueName =  var.environment_name == "flu-dev" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
                 }
                 type = "string"
               }
