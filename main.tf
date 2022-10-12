@@ -106,7 +106,7 @@ resource "azapi_resource" "aca" {
         containers = [
           {
             image = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
-            name = "Main"
+            name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
             resources = {
               cpu = 0.25
               memory = "0.5Gi"
