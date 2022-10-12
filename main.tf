@@ -106,6 +106,12 @@ resource "azapi_resource" "aca" {
           external = true
           targetPort = 8080
         }
+        secrets = [
+          {
+            name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbq-connection-string"
+            value = azurerm_storage_queue.sbq.name
+          }
+        ]
       }
       template = {
         containers = [
@@ -121,6 +127,24 @@ resource "azapi_resource" "aca" {
         scale = {
           maxReplicas = 2
           minReplicas = 0
+          rules = [
+            {
+              custom = {
+                auth = [
+                  {
+                    secretRef = "flu-${local.environment_name[terraform.workspace]}-datalake-sbq-connection-string"
+                    triggerParameter = "connection"
+                  }
+                ]
+                metadata = {
+                  messageCount = 10
+                  queueName = azurerm_storage_queue.sbq.name
+                }
+                type = "string"
+              }
+              name = "size-queue"
+            }
+          ]
         }
       }
     }
