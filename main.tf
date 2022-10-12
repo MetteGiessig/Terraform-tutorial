@@ -3,6 +3,10 @@ locals {
     flu-dev   = "dev"
     flu-stage = "stage"
   }
+  create_queue = {
+    flu-dev   = true
+    flu-stage = false
+  }
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -51,6 +55,7 @@ resource "azurerm_storage_container" "dls" {
 }
 
 resource "azurerm_storage_queue" "sbq" {
+  count = ${local.create_queue[terraform.workspace]} ? 1 : 0
   name                 = "flu${local.environment_name[terraform.workspace]}datalakesbq"
   storage_account_name = azurerm_storage_account.st.name
 }
@@ -72,23 +77,6 @@ resource "azapi_resource" "aca_env" {
       }
     }
  })
-}
-
-resource "azapi_resource" "cr" {
-  type      = "Microsoft.ContainerRegistry/registries@2021-12-01-preview"
-  name      = "flu${local.environment_name[terraform.workspace]}DatalakeCr"
-  parent_id = azurerm_resource_group.rg.id
-
-  location = azurerm_resource_group.rg.location
-
-  body = jsonencode({
-    sku = {
-      name = "Basic"
-    }
-    properties = {
-      adminUserEnabled = true
-    }
-  })
 }
 
 resource "azapi_resource" "aca" {
