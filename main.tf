@@ -71,6 +71,7 @@ resource "azurerm_servicebus_namespace" "sb" {
 }
 
 resource "azurerm_servicebus_topic" "sbt" {
+  count = azurerm_resource_group.rg.name == "flu-dev-datalake-rg" ? 1 : 0
   name         = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt"
   namespace_id = azurerm_servicebus_namespace.sb.id
 
@@ -146,7 +147,7 @@ resource "azapi_resource" "aca" {
                 ]
                 metadata = {
                   messageCount = "10"
-                  queueName =  local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_topic.sbt.name : var.Topic_name
+                  queueName =  azurerm_resource_group.rg.name == "flu-dev-datalake-rg" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
                 }
                 type = "string"
               }
