@@ -55,7 +55,6 @@ resource "azapi_resource" "aca_env" {
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
   name      = "flu-${local.environment_name[terraform.workspace]}-datalake-env"
-  tags      = local.tags
   
   body   = jsonencode({
     properties = {
