@@ -96,7 +96,7 @@ resource "azapi_resource" "aca" {
     properties = {
       managedEnvironmentId = azapi_resource.aca_env.id
       configuration = {
-        activeRevisionsMode = "Single"
+        activeRevisionsMode = "single"
         ingress = {
           external = true
           targetPort = 8080
@@ -108,7 +108,7 @@ resource "azapi_resource" "aca" {
             image = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
             name = "Main"
             resources = {
-              cpu = "0.25"
+              cpu = 0.25
               memory = "0.5Gi"
             }
           }
