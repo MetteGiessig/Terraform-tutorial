@@ -50,6 +50,11 @@ resource "azurerm_storage_container" "dls" {
   storage_account_name = azurerm_storage_account.st.name
 }
 
+resource "azurerm_storage_queue" "sbq" {
+  name                 = "flu${local.environment_name[terraform.workspace]}datalakesbq"
+  storage_account_name = azurerm_storage_account.st.name
+}
+
 resource "azapi_resource" "aca_env" {
   type      = "Microsoft.App/managedEnvironments@2022-01-01-preview"
   parent_id = azurerm_resource_group.rg.id
