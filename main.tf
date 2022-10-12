@@ -126,7 +126,7 @@ resource "azapi_resource" "aca" {
         secrets = [
           {
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
-            value = azurerm_servicebus_topic.sbt.name
+            value = local.environment_name[terraform.workspace] == "flu-dev" ? azurerm_servicebus_namespace.sb.default_primary_connection_string : var.Topic_connection_string
           }
         ]
       }
@@ -142,7 +142,7 @@ resource "azapi_resource" "aca" {
           }
         ]
         scale = {
-          maxReplicas = 2
+          maxReplicas = 5
           minReplicas = 0
           rules = [
             {
