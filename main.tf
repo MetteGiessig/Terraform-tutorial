@@ -8,7 +8,7 @@ locals {
 #Creating the Resource Group for all the resources
 
 resource "azurerm_resource_group" "rg" {
-  name     = "terraform-test"
+  name     = "flu-${local.environment_name[terraform.workspace]}-datalake-log"
   location = "West Europe"
 }
 
@@ -67,7 +67,7 @@ resource "azurerm_storage_data_lake_gen2_filesystem" "fs" {
 # For the dev environment we create a service bus with a topic queue with a subscribtion
 
 resource "azurerm_servicebus_namespace" "sb" {
-  count = azurerm_resource_group.rg.name == "terraform-test" ? 1 : 0
+  count = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? 1 : 0
   name                = "flu-${local.environment_name[terraform.workspace]}-datalake-sbn"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -79,7 +79,7 @@ resource "azurerm_servicebus_namespace" "sb" {
 }
 
 resource "azurerm_servicebus_topic" "sbt" {
-  count = azurerm_resource_group.rg.name == "terraform-test" ? 1 : 0
+  count = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? 1 : 0
   name         = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt"
   namespace_id = azurerm_servicebus_namespace.sb[0].id
 
@@ -87,7 +87,7 @@ resource "azurerm_servicebus_topic" "sbt" {
 }
 
 resource "azurerm_servicebus_subscription" "sbts" {
-  count = azurerm_resource_group.rg.name == "terraform-test" ? 1 : 0
+  count = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? 1 : 0
   name               = "flu-${local.environment_name[terraform.workspace]}-datalake-sbts"
   topic_id           = azurerm_servicebus_topic.sbt[0].id
   max_delivery_count = 500
@@ -162,8 +162,8 @@ resource "azapi_resource" "aca" {
                 ]
                 metadata = {
                   messageCount = "10"
-                  topicName =  azurerm_resource_group.rg.name == "terraform-test" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
-                  subscriptionName = azurerm_resource_group.rg.name == "terraform-test" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
+                  topicName =  azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
+                  subscriptionName = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
                 }
                 type = "azure-servicebus"
               }
