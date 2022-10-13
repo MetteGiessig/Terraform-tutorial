@@ -104,12 +104,11 @@ resource "azurerm_container_registry" "acr" {
 
 resource "null_resource" "docker_push" {
       provisioner "local-exec" {
-      command = <<-EOT
-        "cd Docker-images/flu-queue-flow"
-        "docker build -t test:latest ."
-        "docker login ${azurerm_container_registry.acr.login_server}"
-        "docker push ${azurerm_container_registry.acr.login_server}"
-      EOT
+      command = "cd Docker-images/flu-queue-flow"
+      #   "docker build -t test:latest ."
+      #   "docker login ${azurerm_container_registry.acr.login_server}"
+      #   "docker push ${azurerm_container_registry.acr.login_server}"
+      # EOT
       }
     }
 
@@ -157,16 +156,16 @@ resource "azapi_resource" "aca" {
         ]
       }
       template = {
-        containers = [
-          {
-            image = "${azurerm_container_registry.acr.login_server} /containerapps-helloworld:latest"
-            name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
-            resources = {
-              cpu = 0.25
-              memory = "0.5Gi"
-            }
-          }
-        ]
+        # containers = [
+        #   {
+        #     image = "${azurerm_container_registry.acr.login_server} /containerapps-helloworld:latest"
+        #     name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
+        #     resources = {
+        #       cpu = 0.25
+        #       memory = "0.5Gi"
+        #     }
+        #   }
+        # ]
         scale = {
           maxReplicas = 5
           minReplicas = 0
