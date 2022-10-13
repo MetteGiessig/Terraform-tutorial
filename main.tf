@@ -105,10 +105,10 @@ resource "azurerm_container_registry" "acr" {
 resource "null_resource" "docker_push" {
       provisioner "local-exec" {
       command = <<-EOT
-        cd Docker-images/flu-queue-flow
-        docker build -t test:latest .
-        docker login ${azurerm_container_registry.acr.login_server} 
-        docker push ${azurerm_container_registry.acr.login_server}
+        "cd Docker-images/flu-queue-flow"
+        "docker build -t test:latest ."
+        "docker login ${azurerm_container_registry.acr.login_server}"
+        "docker push ${azurerm_container_registry.acr.login_server}"
       EOT
       }
     }
