@@ -108,7 +108,12 @@ resource "null_resource" "docker_push" {
       #   "docker build -t test:latest ."
       #   "docker login ${azurerm_container_registry.acr.login_server}"
       #   "docker push ${azurerm_container_registry.acr.login_server}"
-      # EOT
+      }
+
+      provisioner "local-exec" {
+      command =  "docker build -t test:latest ."
+      #   "docker login ${azurerm_container_registry.acr.login_server}"
+      #   "docker push ${azurerm_container_registry.acr.login_server}"
       }
     }
 
@@ -133,63 +138,63 @@ resource "azapi_resource" "aca_env" {
  })
 }
 
-resource "azapi_resource" "aca" {
-  type = "Microsoft.App/containerApps@2022-01-01-preview"
-  name = "flu-${local.environment_name[terraform.workspace]}-datalake-aca"
-  location = azurerm_resource_group.rg.location
-  parent_id = azurerm_resource_group.rg.id
+# resource "azapi_resource" "aca" {
+#   type = "Microsoft.App/containerApps@2022-01-01-preview"
+#   name = "flu-${local.environment_name[terraform.workspace]}-datalake-aca"
+#   location = azurerm_resource_group.rg.location
+#   parent_id = azurerm_resource_group.rg.id
 
-  body = jsonencode({
-    properties = {
-      managedEnvironmentId = azapi_resource.aca_env.id
-      configuration = {
-        activeRevisionsMode = "single"
-        ingress = {
-          external = true
-          targetPort = 8080
-        }
-        secrets = [
-          {
-            name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
-            value =  azurerm_servicebus_namespace.sb[0].default_primary_connection_string
-          }
-        ]
-      }
-      template = {
-        # containers = [
-        #   {
-        #     image = "${azurerm_container_registry.acr.login_server} /containerapps-helloworld:latest"
-        #     name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
-        #     resources = {
-        #       cpu = 0.25
-        #       memory = "0.5Gi"
-        #     }
-        #   }
-        # ]
-        scale = {
-          maxReplicas = 5
-          minReplicas = 0
-          rules = [
-            {
-              custom = {
-                auth = [
-                  {
-                    secretRef = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
-                    triggerParameter = "connection"
-                  }
-                ]
-                metadata = {
-                  messageCount = "10"
-                  topicName =  azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
-                  subscriptionName = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
-                }
-                type = "azure-servicebus"
-              }
-              name = "size-queue"
-            }
-          ]
-        }
-      }
-    }
-  })
-}
+#   body = jsonencode({
+#     properties = {
+#       managedEnvironmentId = azapi_resource.aca_env.id
+#       configuration = {
+#         activeRevisionsMode = "single"
+#         ingress = {
+#           external = true
+#           targetPort = 8080
+#         }
+#         secrets = [
+#           {
+#             name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
+#             value =  azurerm_servicebus_namespace.sb[0].default_primary_connection_string
+#           }
+#         ]
+#       }
+#       template = {
+#         containers = [
+#           {
+#             image = "${azurerm_container_registry.acr.login_server} /containerapps-helloworld:latest"
+#             name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
+#             resources = {
+#               cpu = 0.25
+#               memory = "0.5Gi"
+#             }
+#           }
+#         ]
+#         scale = {
+#           maxReplicas = 5
+#           minReplicas = 0
+#           rules = [
+#             {
+#               custom = {
+#                 auth = [
+#                   {
+#                     secretRef = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
+#                     triggerParameter = "connection"
+#                   }
+#                 ]
+#                 metadata = {
+#                   messageCount = "10"
+#                   topicName =  azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
+#                   subscriptionName = azurerm_resource_group.rg.name == "flu-dev-datalake-log" ? azurerm_servicebus_topic.sbt[0].name : var.Topic_name
+#                 }
+#                 type = "azure-servicebus"
+#               }
+#               name = "size-queue"
+#             }
+#           ]
+#         }
+#       }
+#     }
+#   })
+# }
