@@ -93,6 +93,25 @@ resource "azurerm_servicebus_subscription" "sbts" {
   max_delivery_count = 500
 }
 
+# Create a Container registry with a Repository for the docker container
+
+resource "azurerm_container_registry" "acr" {
+  name                = "flu-${local.environment_name[terraform.workspace]}-datalake-acr"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Basic"
+}
+
+resource "null_resource" "docker_push" {
+      provisioner "local-exec" {
+      command = <<-EOT
+        cd Docker-images/flu-queue-flow
+        docker build -t test:latest .
+        docker login ${azurerm_container_registry.acr.login_server} 
+        docker push ${azurerm_container_registry.acr.login_server}
+      EOT
+      }
+    }
 
 # Create a managed Environment with a container appi
 
@@ -140,7 +159,7 @@ resource "azapi_resource" "aca" {
       template = {
         containers = [
           {
-            image = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+            image = "${azurerm_container_registry.login_server}/containerapps-helloworld:latest"
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
             resources = {
               cpu = 0.25

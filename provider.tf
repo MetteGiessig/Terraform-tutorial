@@ -5,9 +5,14 @@ terraform {
       version = "~> 3.0.2"
     }
 
-        azapi = {
+    azapi = {
       source  = "azure/azapi"
       version = "=0.1.0"
+    }
+
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "2.22.0"
     }
   }
   required_version = ">= 1.1.0"
@@ -20,4 +25,8 @@ provider "azurerm" {
 }
 
 provider "azapi" {
+}
+
+provider "docker" {
+  host = "unix:///var/run/docker.sock"
 }

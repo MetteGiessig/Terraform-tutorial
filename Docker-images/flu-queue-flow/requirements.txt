@@ -1,0 +1,8 @@
+azure.servicebus
+azure_storage==0.36.0
+azure-storage-file-datalake
+opencensus
+opencensus-context
+opencensus_ext_azure
+python_dateutil
+python-dotenv
