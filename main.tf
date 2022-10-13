@@ -159,7 +159,7 @@ resource "azapi_resource" "aca" {
       template = {
         containers = [
           {
-            image = azurerm_container_registry.login_server+"/containerapps-helloworld:latest"
+            image = "${azurerm_container_registry.acr.login_server} /containerapps-helloworld:latest"
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
             resources = {
               cpu = 0.25
