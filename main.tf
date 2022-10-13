@@ -47,7 +47,7 @@ resource "azurerm_application_insights_smart_detection_rule" "rule" {
 # Create the storage account with the Azure Data Lake Storage Gen2
 
 resource "azurerm_storage_account" "st" {
-  name                             = "flu${local.environment_name[terraform.workspace]}datalakestorageaccount"
+  name                             = "flu${local.environment_name[terraform.workspace]}datalakestor"
   account_replication_type         = "LRS"
   account_tier                     = "Standard"
   access_tier                      = "Cool"
