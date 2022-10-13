@@ -96,7 +96,7 @@ resource "azurerm_servicebus_subscription" "sbts" {
 # Create a Container registry with a Repository for the docker container
 
 resource "azurerm_container_registry" "acr" {
-  name                = "flu-${local.environment_name[terraform.workspace]}-datalake-acr"
+  name                = "flu${local.environment_name[terraform.workspace]}datalakeacr"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
@@ -159,7 +159,7 @@ resource "azapi_resource" "aca" {
       template = {
         containers = [
           {
-            image = "${azurerm_container_registry.login_server}/containerapps-helloworld:latest"
+            image = azurerm_container_registry.login_server+"/containerapps-helloworld:latest"
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-ci"
             resources = {
               cpu = 0.25
