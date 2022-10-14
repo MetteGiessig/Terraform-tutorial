@@ -100,6 +100,7 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
+  admin_enabled       = true
 }
 
 resource "docker_registry_image" "image" {
@@ -111,8 +112,8 @@ resource "docker_registry_image" "image" {
     dockerfile = "Dockerfile"
     auth_config {
       host_name = azurerm_container_registry.acr.login_server
-      user_name = azurerm_container_registry.acr.username
-      password = azurerm_container_registry.acr.password
+      user_name = azurerm_container_registry.acr.admin_username
+      password = azurerm_container_registry.acr.admin_password
     }
  }
 }
