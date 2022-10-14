@@ -95,12 +95,22 @@ resource "azurerm_servicebus_subscription" "sbts" {
 
 # Create a Container registry with a Repository for the docker container
 
-resource "azurerm_container_registry" "acr" {
+resource "azurerm_container_registry" "acr1" {
   name                = "flu${local.environment_name[terraform.workspace]}datalakeacr"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
   admin_enabled       = true
+
+  provisioner "remote-exec" {
+      command = <<EOT
+        cd Docker-images/flu-queue-flow
+        pip install docker
+        docker build -t test:latest .
+        docker login ${azurerm_container_registry.acr.login_server}
+        docker push ${azurerm_container_registry.acr.login_server}
+      EOT
+      }
 }
 
 # Create a managed Environment with a container appi
@@ -125,7 +135,7 @@ resource "azapi_resource" "aca_env" {
 }
 
 resource "null_resource" "docker" {
-      provisioner "local-exec" {
+      provisioner "remote-exec" {
       command = <<EOT
         cd Docker-images/flu-queue-flow
         pip install docker
