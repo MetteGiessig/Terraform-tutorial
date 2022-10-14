@@ -144,7 +144,7 @@ resource "azapi_resource" "aca" {
           {
             server            = "pixlpile.azurecr.io"
             username          = "Pixlpile"
-            passwordSecretRef = "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
+            PasswordSecretRef = "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
           }
         ],
         secrets = [
