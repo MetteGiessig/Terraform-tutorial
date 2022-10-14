@@ -140,17 +140,21 @@ resource "azapi_resource" "aca" {
           external = true
           targetPort = 8080
         }
-        registries = [
-          {
-            passwordSecretRef = "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
-            server            = "pixlpile.azurecr.io"
-            username          = "Pixlpile"
-          }
-        ],
         secrets = [
           {
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
             value =  azurerm_servicebus_namespace.sb[0].default_primary_connection_string
+          },
+           {
+            name = "test"
+            value =  "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
+          }
+        ]
+        registries = [
+          {
+            passwordSecretRef = test
+            server            = "pixlpile.azurecr.io"
+            username          = "Pixlpile"
           }
         ]
       }
