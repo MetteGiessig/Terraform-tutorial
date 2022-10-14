@@ -152,7 +152,7 @@ resource "azapi_resource" "aca" {
         ]
         registries = [
           {
-            passwordSecretRef = test
+            passwordSecretRef = self.test
             server            = "pixlpile.azurecr.io"
             username          = "Pixlpile"
           }
