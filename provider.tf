@@ -26,7 +26,3 @@ provider "azurerm" {
 
 provider "azapi" {
 }
-
-provider "docker" {
-  host = "unix:///var/run/docker.sock"
-}
