@@ -106,7 +106,7 @@ provider "docker" {
 
   // Used when deploying from a build pipeline
   dynamic "registry_auth" {
-    for_each = (var.docker_registry_username == "" || var.docker_registry_password == "") ? [] : [1]
+    for_each = (azurerm_container_registry.acr.username == "" || azurerm_container_registry.acr.password == "") ? [] : [1]
     content {
       address  = azurerm_container_registry.acr.login_server
       username = azurerm_container_registry.acr.username
