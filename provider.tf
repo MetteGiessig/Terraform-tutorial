@@ -9,11 +9,6 @@ terraform {
       source  = "azure/azapi"
       version = "=0.1.0"
     }
-
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "2.22.0"
-    }
   }
   required_version = ">= 1.1.0"
 
@@ -25,8 +20,4 @@ provider "azurerm" {
 }
 
 provider "azapi" {
-}
-
-provider "docker" {
-  host = "tcp://127.0.0.1:2375/"
 }

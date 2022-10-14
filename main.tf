@@ -103,21 +103,6 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
 }
 
-resource "docker_registry_image" "image" {
-  name          = "flu-${local.environment_name[terraform.workspace]}-datalake-queue:test"
-  keep_remotely = true
-
-  build {
-    context    = "Docker-images/flu-queue-flow"
-    dockerfile = "Dockerfile"
-    auth_config {
-      host_name = azurerm_container_registry.acr.login_server
-      user_name = azurerm_container_registry.acr.admin_username
-      password = azurerm_container_registry.acr.admin_password
-    }
- }
-}
-
 # Create a managed Environment with a container appi
 
 resource "azapi_resource" "aca_env" {
@@ -138,6 +123,18 @@ resource "azapi_resource" "aca_env" {
     }
  })
 }
+
+resource "null_resource" "docker" {
+      provisioner "local-exec" {
+      command = <<EOT
+        cd Docker-images/flu-queue-flow
+        pip install docker
+        docker build -t test:latest .
+        docker login ${azurerm_container_registry.acr.login_server}
+        docker push ${azurerm_container_registry.acr.login_server}
+      EOT
+      }
+    }
 
 # resource "azapi_resource" "aca" {
 #   type = "Microsoft.App/containerApps@2022-01-01-preview"
