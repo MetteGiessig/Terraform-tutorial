@@ -107,8 +107,8 @@ resource "azurerm_container_registry" "acr1" {
       "cd Docker-images/flu-queue-flow",
       "pip install docker",
       "docker build -t test:latest .",
-      "docker login ${azurerm_container_registry.acr.login_server}",
-      "docker push ${azurerm_container_registry.acr.login_server}"
+      "docker login ${self.login_server}",
+      "docker push ${self.login_server}"
     ]
  }
 }
@@ -135,7 +135,7 @@ resource "azapi_resource" "aca_env" {
 }
 
 resource "null_resource" "docker" {
-      provisioner "remote-exec" {
+      provisioner "local-exec" {
       command = <<EOT
         cd Docker-images/flu-queue-flow
         pip install docker
