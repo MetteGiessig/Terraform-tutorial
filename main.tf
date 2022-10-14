@@ -102,17 +102,39 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Basic"
 }
 
-resource "null_resource" "docker1" {
-      provisioner "local-exec" {
-      command = <<EOT
-        pip install docker
-        cd Docker-images/flu-queue-flow
-        docker build -t test:latest .
-        docker login ${azurerm_container_registry.acr.login_server}
-        docker push ${azurerm_container_registry.acr.login_server}
-      EOT
-      }
+provider "docker" {
+
+  // Used when deploying from a build pipeline
+  dynamic "registry_auth" {
+    for_each = (var.docker_registry_username == "" || var.docker_registry_password == "") ? [] : [1]
+    content {
+      address  = azurerm_container_registry.acr.login_server
+      username = azurerm_container_registry.acr.username
+      password = azurerm_container_registry.acr.password
     }
+  }
+}
+
+resource "docker_registry_image" "image" {
+  name          = "flu-${local.environment_name[terraform.workspace]}-datalake-queue:test"
+  keep_remotely = true
+
+  build {
+    context    = "Docker-images/flu-queue-flow"
+  }
+}
+
+# resource "null_resource" "docker" {
+#       provisioner "local-exec" {
+#       command = <<EOT
+#         cd Docker-images/flu-queue-flow
+#         pip install docker
+#         docker build -t test:latest .
+#         docker login ${azurerm_container_registry.acr.login_server}
+#         docker push ${azurerm_container_registry.acr.login_server}
+#       EOT
+#       }
+#     }
 
 # Create a managed Environment with a container appi
 
