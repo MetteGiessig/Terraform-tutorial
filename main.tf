@@ -110,6 +110,7 @@ resource "azurerm_container_registry" "acr1" {
       "docker login ${azurerm_container_registry.acr.login_server}",
       "docker push ${azurerm_container_registry.acr.login_server}"
     ]
+ }
 }
 
 # Create a managed Environment with a container appi
