@@ -121,6 +121,7 @@ resource "azapi_resource" "aca_env" {
           sharedKey  = azurerm_log_analytics_workspace.log.primary_shared_key
         }
       }
+      
     }
  })
 }
@@ -145,14 +146,14 @@ resource "azapi_resource" "aca" {
             name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-connection-string"
             value =  azurerm_servicebus_namespace.sb[0].default_primary_connection_string
           },
-           {
-            name = "test"
+          {
+            name = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-password"
             value =  "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
-          }
+          }    
         ]
         registries = [
           {
-            passwordSecretRef = self.test
+            passwordSecretRef = "flu-${local.environment_name[terraform.workspace]}-datalake-sbt-password"
             server            = "pixlpile.azurecr.io"
             username          = "Pixlpile"
           }
