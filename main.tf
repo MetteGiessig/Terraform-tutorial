@@ -134,18 +134,6 @@ resource "azapi_resource" "aca_env" {
  })
 }
 
-resource "null_resource" "docker" {
-      provisioner "local-exec" {
-      command = <<EOT
-        cd Docker-images/flu-queue-flow
-        pip install docker
-        docker build -t test:latest .
-        docker login ${azurerm_container_registry.acr.login_server}
-        docker push ${azurerm_container_registry.acr.login_server}
-      EOT
-      }
-    }
-
 # resource "azapi_resource" "aca" {
 #   type = "Microsoft.App/containerApps@2022-01-01-preview"
 #   name = "flu-${local.environment_name[terraform.workspace]}-datalake-aca"
