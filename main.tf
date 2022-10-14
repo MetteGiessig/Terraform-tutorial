@@ -95,12 +95,19 @@ resource "azurerm_servicebus_subscription" "sbts" {
 
 # Create a Container registry with a Repository for the docker container
 
-resource "azurerm_container_registry" "acr1" {
+resource "azurerm_container_registry" "acr" {
   name                = "flu${local.environment_name[terraform.workspace]}datalakeacr"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
   admin_enabled       = true
+
+  connection {
+    type     = "ssh"
+    user     = self.admin_username
+    password = self.admin_password
+    host     = self.login_server
+  }
 
   provisioner "remote-exec" {
     inline = [
