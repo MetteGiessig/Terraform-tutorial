@@ -139,7 +139,7 @@ resource "azapi_resource" "aca" {
         ingress = {
           external = true
           targetPort = 8080
-        }
+        },
         registries = [
           {
             server            = "pixlpile.azurecr.io"
