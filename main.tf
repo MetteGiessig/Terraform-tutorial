@@ -103,14 +103,13 @@ resource "azurerm_container_registry" "acr1" {
   admin_enabled       = true
 
   provisioner "remote-exec" {
-      command = <<EOT
-        cd Docker-images/flu-queue-flow
-        pip install docker
-        docker build -t test:latest .
-        docker login ${azurerm_container_registry.acr.login_server}
-        docker push ${azurerm_container_registry.acr.login_server}
-      EOT
-      }
+    inline = [
+      "cd Docker-images/flu-queue-flow",
+      "pip install docker",
+      "docker build -t test:latest .",
+      "docker login ${azurerm_container_registry.acr.login_server}",
+      "docker push ${azurerm_container_registry.acr.login_server}"
+    ]
 }
 
 # Create a managed Environment with a container appi
