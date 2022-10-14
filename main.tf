@@ -139,12 +139,12 @@ resource "azapi_resource" "aca" {
         ingress = {
           external = true
           targetPort = 8080
-        },
+        }
         registries = [
           {
+            passwordSecretRef = "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
             server            = "pixlpile.azurecr.io"
             username          = "Pixlpile"
-            PasswordSecretRef = "wtHVke7I3T07hyPbg68s+s6uOmUFZsz3"
           }
         ],
         secrets = [
