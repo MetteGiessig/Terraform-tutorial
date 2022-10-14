@@ -111,7 +111,7 @@ resource "azurerm_container_registry" "acr" {
       }
 }
 
-resource "null_resource" "docker_push" {
+resource "null_resource" "docker" {
       provisioner "local-exec" {
       command = <<EOT
         cd Docker-images/flu-queue-flow
